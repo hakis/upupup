@@ -20,21 +20,12 @@ public class Orbit : MonoBehaviour
     [SerializeField, Range(0f, 360f)]
     float rotationSpeed = 90f;
 
+    [SerializeField]
+    Vector3 orbitAngles = new Vector3(45f, 0f, 0f);
+
     Vector3 focusPoint;
 
-    [SerializeField]
-    Vector2 orbitAngles = new Vector2(45f, 0f);
-
-    void Start()
-    {
-        //focus = World.me.player.transform;
-    }
-
-    void Update()
-    {
-    }
-
-    private void LateUpdate()
+    private void Update()
     {
         UpdateFocusPoint();
         ManualRotation();
@@ -45,17 +36,6 @@ public class Orbit : MonoBehaviour
         transform.SetPositionAndRotation(lookPosition, lookRotation);
     }
 
-    void ManualRotation()
-    {
-        Vector2 input = new Vector2(
-            Input.GetKey(KeyCode.W) ? 1f : Input.GetKey(KeyCode.S) ? -1f : 0f,
-            Input.GetKey(KeyCode.A) ? 1f : Input.GetKey(KeyCode.D) ? -1f : 0f
-            );
-
-        orbitAngles += rotationSpeed * Time.unscaledDeltaTime * input;
-
-    }
-
     private void UpdateFocusPoint()
     {
         Vector3 targetPoint = focus.position;
@@ -64,6 +44,7 @@ public class Orbit : MonoBehaviour
         {
             float distance = Vector3.Distance(targetPoint, focusPoint);
             float t = 1f;
+
             if (distance > 0.01f && focusCenter > 0f)
             {
                 t = Mathf.Pow(1f - focusCenter, Time.unscaledDeltaTime);
@@ -80,5 +61,16 @@ public class Orbit : MonoBehaviour
         {
             focusPoint = targetPoint;
         }
+    }
+
+    void ManualRotation()
+    {
+        Vector3 input = new Vector3(
+            Input.GetKey(KeyCode.W) ? 1f : Input.GetKey(KeyCode.S) ? -1f : 0f,
+            Input.GetKey(KeyCode.A) ? 1f : Input.GetKey(KeyCode.D) ? -1f : 0f,
+            0f
+            );
+
+        orbitAngles += rotationSpeed * Time.unscaledDeltaTime * input;
     }
 }
