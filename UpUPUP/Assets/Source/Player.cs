@@ -4,21 +4,50 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    public class KeyFrame
+    {
+        public Vector3 from, to;
+        public float t, d;
+    }
+    List<KeyFrame> keyFrames = new List<KeyFrame>();
+
+
     public Tile previous = null;
     // Start is called before the first frame update
     void Start()
     {
-        transform.position = previous.transform.position + new Vector3(0f,1f,0f);
+        transform.position = previous.transform.position + new Vector3(0f, 1f, 0f);
     }
 
     // Update is called once per frame
     void Update()
     {
+        foreach (KeyFrame k in keyFrames)
+        {
+            if (k.t > 1)
+            {
+                k.t = 0.0f;
+                keyFrames.Clear();
+                return;
+            }
+            k.t += Time.deltaTime / k.d;
+
+            Vector3 v1 = transform.position;
+            Vector3 v2 = k.to;
+            v1.y = 0;
+            v2.y = 0;
+
+            Vector3 diraction = v1 - v2;
+            Quaternion lookAt = Quaternion.LookRotation(diraction, Vector3.up);
+
+            transform.rotation = Quaternion.Lerp(transform.rotation, lookAt, k.t);
+            transform.position = Vector3.Lerp(k.from, k.to, k.t);
+        }
     }
 
     public void MoveTo(Tile tile)
     {
-        if (previous == null)
+        if (previous == null || keyFrames.Count > 0)
         {
             Debug.Log("current cant be null");
             return;
@@ -43,15 +72,22 @@ public class Player : MonoBehaviour
                     Vector3 to = tile.transform.position + new Vector3(0, 1.0f, 0);
 
                     {
-                        direction = new Vector3(0f,transform.position.y == to.y ? 0f : (transform.position.y < to.y ? 1f : -1f), 0f);
+                        direction = new Vector3(0f, transform.position.y == to.y ? 0f : (transform.position.y < to.y ? 1f : -1f), 0f);
 
-                        if (World.me.findTile(to) != null) {
+                        if (World.me.findTile(to) != null)
+                        {
                             return;
                         }
                     }
 
                     moved = true;
-                    transform.position = to;
+                    //transform.position = to;
+                    KeyFrame k = new KeyFrame();
+                    k.to = to;
+                    k.from = transform.position;
+                    k.d = 0.5f;
+                    k.t = 0.0f;
+                    keyFrames.Add(k);
                     break;
                 }
             }
@@ -61,7 +97,7 @@ public class Player : MonoBehaviour
             return;
 
         //check can the tile move in the diraction
-        if(previous.move(new int[,] { { (int)direction.x, (int)direction.y, (int)direction.z} }))
+        if (previous.move(new int[,] { { (int)direction.x, (int)direction.y, (int)direction.z } }))
         {
             previous.transform.position += direction;
         }

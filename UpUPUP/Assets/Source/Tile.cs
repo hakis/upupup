@@ -25,6 +25,12 @@ public class Tile : MonoBehaviour
         }
 
         player.MoveTo(this);
+
+        Audio audio = Object.FindObjectOfType<Audio>();
+        audio.Play("Tile", () =>
+        {
+
+        });
     }
 
 
