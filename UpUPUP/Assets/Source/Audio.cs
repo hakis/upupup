@@ -19,7 +19,7 @@ public class Audio : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        root = Application.persistentDataPath;
+        root = System.IO.Directory.GetCurrentDirectory(); // Application.persistentDataPath;
         StartCoroutine(GetText("list.txt", () =>
          {
              Play("Bg", () =>
