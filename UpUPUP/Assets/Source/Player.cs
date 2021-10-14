@@ -27,6 +27,7 @@ public class Player : MonoBehaviour
             if (k.t > 1)
             {
                 k.t = 0.0f;
+                transform.position = k.to;
                 keyFrames.Clear();
                 return;
             }
@@ -99,6 +100,8 @@ public class Player : MonoBehaviour
         //check can the tile move in the diraction
         if (previous.move(new int[,] { { (int)direction.x, (int)direction.y, (int)direction.z } }))
         {
+            Debug.Log(previous);
+            Debug.Log(direction);
             previous.transform.position += direction;
         }
 

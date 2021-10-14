@@ -15,10 +15,10 @@ public class Tile : MonoBehaviour
     {
     }
 
-
     private void OnMouseDown()
     {
-        Player player = Object.FindObjectOfType<Player>();
+        PlayerManager manager = Object.FindObjectOfType<PlayerManager>();
+        Player player = manager.player;
         if (!player || player.previous == this)
         {
             return;
@@ -26,14 +26,11 @@ public class Tile : MonoBehaviour
 
         player.MoveTo(this);
 
-        Audio audio = Object.FindObjectOfType<Audio>();
+        /*Audio audio = Object.FindObjectOfType<Audio>();
         audio.Play("Tile", () =>
         {
-
-        });
+        });*/
     }
-
-
 
     public bool move(int[,] points)
     {
@@ -47,7 +44,7 @@ public class Tile : MonoBehaviour
                     Vector3 v1 = transform.position + new Vector3(points[i, 0], points[i, 1], points[i, 2]);
                     Vector3 v2 = tile.transform.position;
 
-                    if ((v2 - v1).magnitude < 0.5f)
+                    if ((v2 - v1).magnitude <= 0.5f)
                     {
                         Debug.Log((v2 - v1).magnitude);
                         Debug.Log(tile);
