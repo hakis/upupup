@@ -2,12 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+
 public class Tile : MonoBehaviour
 {
+    private static int ids = 0;
+
+    public int id;
     // Start is called before the first frame update
     void Start()
     {
+        id = ids;
+        name = $"Tile:{id}";
 
+        ids++;
     }
 
     // Update is called once per frame
@@ -17,14 +25,15 @@ public class Tile : MonoBehaviour
 
     private void OnMouseDown()
     {
-        PlayerManager manager = Object.FindObjectOfType<PlayerManager>();
-        Player player = manager.player;
+        Player player = World.me.player;
         if (!player || player.previous == this)
         {
             return;
         }
 
-        player.MoveTo(this);
+        //player.MoveTo(this);
+        //Debug.Log($"m:{player.id}:{this.id}");
+        World.me.client.Broadcast($"m:{player.id}:{this.id}");
 
         /*Audio audio = Object.FindObjectOfType<Audio>();
         audio.Play("Tile", () =>
@@ -46,8 +55,8 @@ public class Tile : MonoBehaviour
 
                     if ((v2 - v1).magnitude <= 0.5f)
                     {
-                        Debug.Log((v2 - v1).magnitude);
-                        Debug.Log(tile);
+                        //Debug.Log((v2 - v1).magnitude);
+                        //Debug.Log(tile);
                         return false;
                     }
                 }

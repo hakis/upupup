@@ -27,8 +27,10 @@ public class Orbit : MonoBehaviour
 
     private void Update()
     {
-        PlayerManager manager = Object.FindObjectOfType<PlayerManager>();
-        focusPoint = manager.player.transform.position;
+        if (World.me.player == null)
+            return;
+
+        focusPoint = World.me.player.transform.position;
 
         UpdateFocusPoint();
         ManualRotation();

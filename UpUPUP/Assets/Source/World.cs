@@ -4,7 +4,21 @@ using UnityEngine;
 
 public class World : MonoBehaviour
 {
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    static void OnBeforeSceneLoadRuntimeMethod()
+    {
+        Instantiate(Resources.Load("Prefabs/World", typeof(GameObject)) as GameObject);
+    }
+
+    public bool master;
+
     public static World me;
+
+    public Player player;
+
+    public Client client;
+
+    public string networkmsg = "";
 
     private void Awake()
     {
@@ -16,14 +30,47 @@ public class World : MonoBehaviour
 
     void Start()
     {
-        player = Object.FindObjectOfType<Player>();
+        Player[] players = Object.FindObjectsOfType<Player>();
+        player = null;
+        foreach (Player find in players)
+        {
+            if (find.controlling)
+                player = find;
+        }
+
+        client = GetComponent<Client>();
     }
 
-    public Player player;
+    public void Read(string msg)
+    {
+        Debug.Log(msg);
+        string[] e1 = msg.Split(':');
+        if (e1.Length > 2 && player != null)
+        {
+            MoveTo(e1[1], e1[2]);
+        }
+    }
+
+    public void MoveTo(string pId, string tId)
+    {
+        Player player = GameObject.Find("Player:" + pId).GetComponent<Player>();
+        Tile tile = GameObject.Find("Tile:" + tId).GetComponent<Tile>();
+
+        if (player == null || tile == null)
+        {
+            return;
+        }
+        player.MoveTo(tile);
+    }
 
     // Update is called once per frame
     void Update()
     {
+        if (networkmsg != "")
+        {
+            Read(networkmsg);
+            networkmsg = "";
+        }
     }
 
     public Tile findTile(Vector3 positon)
