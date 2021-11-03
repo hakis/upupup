@@ -20,7 +20,7 @@ public class World : MonoBehaviour
 
     public Package package = null;
 
-    public int[,,] map = new int[100, 100, 100];
+    public int[,,] map = new int[5, 5, 5];
 
     private void Awake()
     {
@@ -114,7 +114,7 @@ public class World : MonoBehaviour
                 for (int x = 0; x < map.GetLength(2); x++)
                 {
                     Gizmos.color = map[y, z, x] == 0 ? Color.green : Color.red;
-                    Gizmos.DrawSphere(Vector3.zero, 1f);
+                    Gizmos.DrawSphere(new Vector3(x,y,z), 0.1f);
                 }
             }
         }
