@@ -18,7 +18,9 @@ public class World : MonoBehaviour
 
     public Client client;
 
-    public string networkmsg = "";
+    public Package package = null;
+
+    public int[,,] map = new int[100, 100, 100];
 
     private void Awake()
     {
@@ -26,6 +28,16 @@ public class World : MonoBehaviour
         {
             me = this;
         }
+    }
+
+    public int GetMapId(Vector3 pos)
+    {
+        return map[(int)pos.y, (int)pos.z, (int)pos.x];
+    }
+
+    public void SetMapId(int id, Vector3 pos)
+    {
+        map[(int)pos.y, (int)pos.z, (int)pos.x] = id;
     }
 
     void Start()
@@ -41,35 +53,36 @@ public class World : MonoBehaviour
         client = GetComponent<Client>();
     }
 
-    public void Read(string msg)
+    public void Read(Package package)
     {
-        Debug.Log(msg);
-        string[] e1 = msg.Split(':');
-        if (e1.Length > 2 && player != null)
+        Debug.Log(package.Action == "PlayerMove" ? "yes" : "no");
+        switch (package.Action)
         {
-            MoveTo(e1[1], e1[2]);
+            case "PlayerMove":
+                MoveTo(package);
+                break;
         }
     }
 
-    public void MoveTo(string pId, string tId)
+    public void MoveTo(Package package)
     {
-        Player player = GameObject.Find("Player:" + pId).GetComponent<Player>();
-        Tile tile = GameObject.Find("Tile:" + tId).GetComponent<Tile>();
-
+        Player player = GameObject.Find("Player:" + package.Id).GetComponent<Player>();
+        Tile tile = GameObject.Find(package.Msg).GetComponent<Tile>();
         if (player == null || tile == null)
         {
             return;
         }
-        player.MoveTo(tile);
+
+        player.MoveTo(tile, package.Time);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (networkmsg != "")
+        if (package != null)
         {
-            Read(networkmsg);
-            networkmsg = "";
+            Read(package);
+            package = null;
         }
     }
 
@@ -89,5 +102,21 @@ public class World : MonoBehaviour
         }
 
         return null;
+    }
+
+    void OnDrawGizmos()
+    {
+        // Draw a yellow sphere at the transform's position
+        for (int y = 0; y < map.GetLength(0); y++)
+        {
+            for (int z = 0; z < map.GetLength(1); z++)
+            {
+                for (int x = 0; x < map.GetLength(2); x++)
+                {
+                    Gizmos.color = map[y, z, x] == 0 ? Color.green : Color.red;
+                    Gizmos.DrawSphere(Vector3.zero, 1f);
+                }
+            }
+        }
     }
 }

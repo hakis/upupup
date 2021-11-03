@@ -26,12 +26,11 @@ public class Client : MonoBehaviour
 
     public void Read(IAsyncResult arg)
     {
+
         int length = stream.EndRead(arg);
         if (length > 0)
         {
-            string msg = Encoding.ASCII.GetString(bytes, 0, bytes.Length);
-            Debug.Log(msg);
-            World.me.networkmsg = msg;
+            World.me.package = Package.Desserialize(bytes);
             bytes = new byte[1024];
             stream.BeginRead(bytes, 0, bytes.Length, Read, null);
         }
@@ -40,11 +39,11 @@ public class Client : MonoBehaviour
             Debug.Log("server down");
         }
     }
-    public void Broadcast(string msg)
+    public void Broadcast(Package package)
     {
         try
         {
-            byte[] bytes = Encoding.ASCII.GetBytes(msg);
+            byte[] bytes = package.Serialize();
             stream.Write(bytes, 0, bytes.Length);
             stream.Flush();
         }

@@ -437,6 +437,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   keyframes: {fileID: 0}
   id: 0
+  controlling: 0
   previous: {fileID: 87387117}
 --- !u!23 &887356293
 MeshRenderer:
@@ -692,6 +693,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   keyframes: {fileID: 0}
   id: 0
+  controlling: 1
   previous: {fileID: 410356820}
 --- !u!1 &1818921723
 GameObject:

@@ -13,15 +13,18 @@ public class KeyFrames : MonoBehaviour
         public Vector3 from, to;
         public float t, d;
 
+        public long max, min;
+
         public bool done;
 
-        public KeyFrame(Type type, Vector3 from, Vector3 to, float duration)
+        public KeyFrame(Type type, Vector3 from, Vector3 to, long max)
         {
             this.type = type;
             this.from = from;
             this.to = to;
-            this.d = duration;
             this.t = 0;
+            this.min = System.DateTime.Now.Ticks;
+            this.max = max;
             done = false;
         }
     }
@@ -41,6 +44,12 @@ public class KeyFrames : MonoBehaviour
         int total = 0;
         foreach (KeyFrame k in all)
         {
+            long range = ((System.DateTime.Now.Ticks - k.min) * 100) / (k.max - k.min);
+            float t = range / 100f;
+
+            if (t >= 1f)
+                total++;
+            /*
             if (!k.done)
             {
                 if (k.t > 1)
@@ -74,14 +83,15 @@ public class KeyFrames : MonoBehaviour
                             break;
                     }
                 }
-            }
+            }   
             else
+            */
             {
-                total += 1;
+                //total += 1;
             }
         }
 
-        if (total == all.Count)
+        if (total >= all.Count)
         {
             all.Clear();
         }
