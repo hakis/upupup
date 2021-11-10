@@ -6,8 +6,8 @@ public class Player : MonoBehaviour
 {
     public KeyFrames keyframes;
 
-    private static int ids = 0;
-    public int id = 0;
+    private static int ids = 1;
+    public int Id = 0;
 
     public bool controlling = false;
 
@@ -15,9 +15,9 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        id = ids;
+        Id = ids;
         ids++;
-        name = $"Player:{id}";
+        name = $"Player:{Id}";
 
         gameObject.AddComponent(typeof(KeyFrames));
 
@@ -30,13 +30,22 @@ public class Player : MonoBehaviour
     {
     }
 
-    public void MoveTo(Tile tile)
+    public Package GetPackage()
     {
-        transform.position = tile.transform.position + new Vector3(0f, 1f, 0f);
-        current = tile;
+        return new Package()
+        {
+            Action = (int)Package.Actions.PLAYER,
+            Contains = new Packages.Player()
+            {
+                Id = Id,
+                Position = Helper.Vector3ToBytes(transform.position),
+                Current = Helper.Vector3ToBytes(current.transform.position)
+
+            }.Serialize()
+        };
     }
 
-    public void MoveTo(Tile tile, long max)
+    public void MoveTo(byte[] from, byte[] to, long tick)
     {
         if (current == null || keyframes.all.Count > 0f)
         {
@@ -46,8 +55,9 @@ public class Player : MonoBehaviour
 
         keyframes.Play(new KeyFrames.KeyFrame(
                         KeyFrames.KeyFrame.Type.MOVE,
-                        Vector3.zero,
-                        Vector3.zero, max));
+                        Helper.BytesToVector3(from),
+                        Helper.BytesToVector3(to) + new Vector3(0f, 1f, 0f),
+                        tick));
         /*
 
          Vector3[] points = new Vector3[] {

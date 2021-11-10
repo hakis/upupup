@@ -10,6 +10,8 @@ public class World : MonoBehaviour
         Instantiate(Resources.Load("Prefabs/World", typeof(GameObject)) as GameObject);
     }
 
+    public int Id;
+
     public bool master;
 
     public static World me;
@@ -18,9 +20,12 @@ public class World : MonoBehaviour
 
     public Client client;
 
-    public Package package = null;
+    public Package package;
 
-    public int[,,] map = new int[5, 5, 5];
+    public int Height, Width, Depth;
+
+
+    public int[] map;
 
     private void Awake()
     {
@@ -30,14 +35,58 @@ public class World : MonoBehaviour
         }
     }
 
-    public int GetMapId(Vector3 pos)
+    public Package GetPackage()
     {
-        return map[(int)pos.y, (int)pos.z, (int)pos.x];
+        return new Package()
+        {
+            Action = (int)Package.Actions.WORLD,
+            Contains = new Packages.World()
+            {
+                Id = Id,
+                Width = Width,
+                Height = Height,
+                Depth = Depth,
+                Map = toBytes(),
+
+            }.Serialize()
+        };
     }
 
-    public void SetMapId(int id, Vector3 pos)
+    public int to1D(Vector3 v)
     {
-        map[(int)pos.y, (int)pos.z, (int)pos.x] = id;
+        int index = ((int)v.z * Width * Height) + ((int)v.y * Width) + (int)v.x;
+        return index > map.Length ? 0 : index;
+    }
+
+    public int[] to3D(int index)
+    {
+        int z = index / (Width * Height);
+        index -= (z * Width * Height);
+        int y = index / Width;
+        int x = index % Width;
+        return new int[] { x, y, z };
+
+    }
+
+    public byte[] toBytes()
+    {
+        byte[] itmes = new byte[map.Length];
+        for (int index = 0; index < map.Length; index++)
+        {
+            itmes[index] = (byte)map[index];
+        }
+
+        return itmes;
+    }
+
+    public int GetMapId(Vector3 pos)
+    {
+        return map[to1D(pos)];
+    }
+
+    public void SetMapId(int tile, Vector3 pos)
+    {
+        map[to1D(pos)] = tile;
     }
 
     void Start()
@@ -50,33 +99,23 @@ public class World : MonoBehaviour
                 player = find;
         }
 
+        map = new int[Height * Width * Depth];
         client = GetComponent<Client>();
     }
 
     public void Read(Package package)
     {
-        Debug.Log(package.Action == "PlayerMove" ? "yes" : "no");
         switch (package.Action)
         {
-            case "PlayerMove":
+            case (int)Package.Actions.WORLD:
+                Packages.World world = Packages.World.Desserialize(package.Contains);
+                break;
+            case (int)Package.Actions.MOVE:
                 MoveTo(package);
                 break;
         }
     }
 
-    public void MoveTo(Package package)
-    {
-        Player player = GameObject.Find("Player:" + package.Id).GetComponent<Player>();
-        Tile tile = GameObject.Find(package.Msg).GetComponent<Tile>();
-        if (player == null || tile == null)
-        {
-            return;
-        }
-
-        player.MoveTo(tile, package.Time);
-    }
-
-    // Update is called once per frame
     void Update()
     {
         if (package != null)
@@ -84,6 +123,41 @@ public class World : MonoBehaviour
             Read(package);
             package = null;
         }
+    }
+
+    public void MoveTo(Package package)
+    {
+        Packages.Move move = Packages.Move.Desserialize(package.Contains);
+        Player[] players = Object.FindObjectsOfType<Player>();
+        foreach (Player player in players)
+        {
+
+            if (player.Id == move.Player)
+            {
+                Debug.Log(package.Action);
+                byte[] from = move.Current;
+                byte[] to = move.Position;
+
+                player.transform.position = Helper.BytesToVector3(to) + new Vector3(0f, 1f, 0f);
+                //player.MoveTo(from, to, move.Time);
+            }
+        }
+
+        Debug.Log(move.Time);
+
+        /*Player player = GameObject.Find("Player:" + package.Id).GetComponent<Player>();
+        Tile tile = GameObject.Find(package.Msg).GetComponent<Tile>();
+        if (player == null || tile == null)
+        {
+            return;
+        }
+
+        player.MoveTo(tile, package.Time);*/
+    }
+
+    public void Broadcast(Package package)
+    {
+        client.Broadcast(package);
     }
 
     public Tile findTile(Vector3 positon)
@@ -106,17 +180,12 @@ public class World : MonoBehaviour
 
     void OnDrawGizmos()
     {
-        // Draw a yellow sphere at the transform's position
-        for (int y = 0; y < map.GetLength(0); y++)
+        for (int index = 0; index < map.Length; index++)
         {
-            for (int z = 0; z < map.GetLength(1); z++)
-            {
-                for (int x = 0; x < map.GetLength(2); x++)
-                {
-                    Gizmos.color = map[y, z, x] == 0 ? Color.green : Color.red;
-                    Gizmos.DrawSphere(new Vector3(x,y,z), 0.1f);
-                }
-            }
+            int[] p = to3D(index);
+            Gizmos.color = map[index] == 0 ? Color.green : Color.red;
+            Gizmos.DrawSphere(new Vector3(p[0], p[1], p[2]), 0.1f);
         }
+
     }
 }
