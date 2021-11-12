@@ -24,7 +24,6 @@ public class World : MonoBehaviour
 
     public int Height, Width, Depth;
 
-
     public int[] map;
 
     private void Awake()
@@ -33,23 +32,6 @@ public class World : MonoBehaviour
         {
             me = this;
         }
-    }
-
-    public Package GetPackage()
-    {
-        return new Package()
-        {
-            Action = (int)Package.Actions.WORLD,
-            Contains = new Packages.World()
-            {
-                Id = Id,
-                Width = Width,
-                Height = Height,
-                Depth = Depth,
-                Map = toBytes(),
-
-            }.Serialize()
-        };
     }
 
     public int to1D(Vector3 v)
@@ -66,17 +48,6 @@ public class World : MonoBehaviour
         int x = index % Width;
         return new int[] { x, y, z };
 
-    }
-
-    public byte[] toBytes()
-    {
-        byte[] itmes = new byte[map.Length];
-        for (int index = 0; index < map.Length; index++)
-        {
-            itmes[index] = (byte)map[index];
-        }
-
-        return itmes;
     }
 
     public int GetMapId(Vector3 pos)
@@ -131,14 +102,10 @@ public class World : MonoBehaviour
         Player[] players = Object.FindObjectsOfType<Player>();
         foreach (Player player in players)
         {
-
             if (player.Id == move.Player)
             {
-                Debug.Log(package.Action);
-                byte[] from = move.Current;
-                byte[] to = move.Position;
-
-                player.transform.position = Helper.BytesToVector3(to) + new Vector3(0f, 1f, 0f);
+                int[] to = World.me.to3D(move.Position);
+                World.me.player.transform.position = new Vector3(to[0], to[1], to[2]) + new Vector3(0f, 1f, 0f);
                 //player.MoveTo(from, to, move.Time);
             }
         }
@@ -176,6 +143,23 @@ public class World : MonoBehaviour
         }
 
         return null;
+    }
+
+    public Package GetPackage()
+    {
+        return new Package()
+        {
+            Action = (int)Package.Actions.WORLD,
+            Contains = new Packages.World()
+            {
+                Id = Id,
+                Width = Width,
+                Height = Height,
+                Depth = Depth,
+                Map = map,
+
+            }.Serialize()
+        };
     }
 
     void OnDrawGizmos()

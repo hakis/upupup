@@ -25,26 +25,6 @@ public class Player : MonoBehaviour
         transform.position = current.transform.position + new Vector3(0f, 1f, 0f);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-    }
-
-    public Package GetPackage()
-    {
-        return new Package()
-        {
-            Action = (int)Package.Actions.PLAYER,
-            Contains = new Packages.Player()
-            {
-                Id = Id,
-                Position = Helper.Vector3ToBytes(transform.position),
-                Current = Helper.Vector3ToBytes(current.transform.position)
-
-            }.Serialize()
-        };
-    }
-
     public void MoveTo(byte[] from, byte[] to, long tick)
     {
         if (current == null || keyframes.all.Count > 0f)

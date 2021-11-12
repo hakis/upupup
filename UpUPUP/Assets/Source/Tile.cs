@@ -14,21 +14,6 @@ public class Tile : MonoBehaviour
     {
     }
 
-    public Package GetPackage()
-    {
-        return new Package()
-        {
-            Action = (int)Package.Actions.MOVE,
-            Contains = new Packages.Move()
-            {
-                Player = (byte)World.me.player.Id,
-                Time = 2,
-                Current = Helper.Vector3ToBytes(World.me.player.current.transform.position),
-                Position = Helper.Vector3ToBytes(transform.position)
-            }.Serialize()
-        };
-    }
-
     private void OnMouseDown()
     {
         World.me.Broadcast(GetPackage());
@@ -84,5 +69,20 @@ public class Tile : MonoBehaviour
         audio.Play("Tile", () =>
         {
         });*/
+    }
+
+    public Package GetPackage()
+    {
+        return new Package()
+        {
+            Action = (int)Package.Actions.MOVE,
+            Contains = new Packages.Move()
+            {
+                Player = World.me.player.Id,
+                Time = 2,
+                Current = World.me.to1D(World.me.player.current.transform.position),
+                Position = World.me.to1D(transform.position)
+            }.Serialize()
+        };
     }
 }

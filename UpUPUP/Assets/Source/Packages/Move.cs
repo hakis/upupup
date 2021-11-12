@@ -7,8 +7,8 @@ namespace Packages
     {
         public int Player;
         public long Time;
-        public byte[] Position;
-        public byte[] Current;
+        public int Position;
+        public int Current;
         public byte[] Serialize()
         {
             using (MemoryStream m = new MemoryStream())
@@ -31,10 +31,10 @@ namespace Packages
             {
                 using (BinaryReader reader = new BinaryReader(m))
                 {
-                    move.Player = reader.ReadByte();
+                    move.Player = reader.ReadInt32();
                     move.Time = reader.ReadInt64();
-                    move.Position = reader.ReadBytes(3);
-                    move.Current = reader.ReadBytes(3);
+                    move.Position = reader.ReadInt32();
+                    move.Current = reader.ReadInt32();
                 }
             }
             return move;

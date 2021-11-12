@@ -6,8 +6,8 @@ namespace Packages
     class Player
     {
         public int Id;
-        public byte[] Position;
-        public byte[] Current;
+        public int Position;
+        public int Current;
 
         public byte[] Serialize()
         {
@@ -31,8 +31,8 @@ namespace Packages
                 using (BinaryReader reader = new BinaryReader(m))
                 {
                     player.Id = reader.ReadInt32();
-                    player.Position = reader.ReadBytes(3);
-                    player.Current = reader.ReadBytes(3);
+                    player.Position = reader.ReadInt32();
+                    player.Current = reader.ReadInt32();
                 }
             }
             return player;

@@ -13,7 +13,7 @@ namespace Packages
 
         public int Depth;
 
-        public byte[] Map;
+        public int[] Map;
 
         public byte[] Serialize()
         {
@@ -25,7 +25,9 @@ namespace Packages
                     writer.Write(Width);
                     writer.Write(Height);
                     writer.Write(Depth);
-                    writer.Write(Map);
+
+                    foreach (int tile in Map)
+                        writer.Write(tile);
                 }
                 return m.ToArray();
             }
@@ -41,9 +43,12 @@ namespace Packages
                     world.Id = reader.ReadInt32();
                     world.Width = reader.ReadInt32();
                     world.Height = reader.ReadInt32();
-                    world.Height = reader.ReadInt32();
-                    long total = reader.BaseStream.Length - reader.BaseStream.Position;
-                    world.Map = reader.ReadBytes((int)total);
+                    world.Depth = reader.ReadInt32();
+
+                    int total = world.Width * world.Height * world.Depth;
+                    world.Map = new int[total];
+                    for (int i = 0; i < total; i++)
+                        world.Map[i] = reader.ReadInt32();
                 }
             }
             return world;
