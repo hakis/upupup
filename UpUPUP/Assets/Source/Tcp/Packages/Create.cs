@@ -3,10 +3,8 @@ using System.IO;
 
 namespace Packages
 {
-    public class World
+    public class Create
     {
-        public int Id;
-
         public int Width;
 
         public int Height;
@@ -21,7 +19,6 @@ namespace Packages
             {
                 using (BinaryWriter writer = new BinaryWriter(m))
                 {
-                    writer.Write(Id);
                     writer.Write(Width);
                     writer.Write(Height);
                     writer.Write(Depth);
@@ -33,25 +30,24 @@ namespace Packages
             }
         }
 
-        public static World Desserialize(byte[] data)
+        public static Create Desserialize(byte[] data)
         {
-            World world = new World();
+            Create create = new Create();
             using (MemoryStream m = new MemoryStream(data))
             {
                 using (BinaryReader reader = new BinaryReader(m))
                 {
-                    world.Id = reader.ReadInt32();
-                    world.Width = reader.ReadInt32();
-                    world.Height = reader.ReadInt32();
-                    world.Depth = reader.ReadInt32();
+                    create.Width = reader.ReadInt32();
+                    create.Height = reader.ReadInt32();
+                    create.Depth = reader.ReadInt32();
 
-                    int total = world.Width * world.Height * world.Depth;
-                    world.Map = new int[total];
+                    int total = create.Width * create.Height * create.Depth;
+                    create.Map = new int[total];
                     for (int i = 0; i < total; i++)
-                        world.Map[i] = reader.ReadInt32();
+                        create.Map[i] = reader.ReadInt32();
                 }
             }
-            return world;
+            return create;
         }
     }
 }

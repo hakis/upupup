@@ -3,11 +3,13 @@ using System.IO;
 
 namespace Packages
 {
-    class Player
+    class Join
     {
         public int Id;
+
         public int Position;
-        public int Current;
+
+        public int Player;
 
         public byte[] Serialize()
         {
@@ -17,25 +19,25 @@ namespace Packages
                 {
                     writer.Write(Id);
                     writer.Write(Position);
-                    writer.Write(Current);
+                    writer.Write(Player);
                 }
                 return m.ToArray();
             }
         }
 
-        public static Player Desserialize(byte[] data)
+        public static Join Desserialize(byte[] data)
         {
-            Player player = new Player();
+            Join join = new Join();
             using (MemoryStream m = new MemoryStream(data))
             {
                 using (BinaryReader reader = new BinaryReader(m))
                 {
-                    player.Id = reader.ReadInt32();
-                    player.Position = reader.ReadInt32();
-                    player.Current = reader.ReadInt32();
+                    join.Id = reader.ReadInt32();
+                    join.Position = reader.ReadInt32();
+                    join.Player = reader.ReadInt32();
                 }
             }
-            return player;
+            return join;
         }
     }
 }

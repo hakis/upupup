@@ -1,12 +1,14 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
+
+
 
 public class Tile : MonoBehaviour
 {
     void Start()
     {
         World.me.SetMapId(1, transform.position);
+        this.name = "Tile";
     }
 
     // Update is called once per frame
@@ -16,7 +18,8 @@ public class Tile : MonoBehaviour
 
     private void OnMouseDown()
     {
-        World.me.Broadcast(GetPackage());
+        World.me.player.Move(GetPackage());
+
 
         /*
         Player player = World.me.player;
@@ -78,10 +81,10 @@ public class Tile : MonoBehaviour
             Action = (int)Package.Actions.MOVE,
             Contains = new Packages.Move()
             {
-                Player = World.me.player.Id,
-                Time = 2,
-                Current = World.me.to1D(World.me.player.current.transform.position),
-                Position = World.me.to1D(transform.position)
+                Player = TcpNetwork.me.Player,
+                Time = TimeSpan.TicksPerSecond / 4,
+                //Current = World.me.To1D(World.me.player.current.transform.position),
+                Position = World.me.To1D(transform.position)
             }.Serialize()
         };
     }

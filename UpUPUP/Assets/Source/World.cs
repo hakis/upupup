@@ -16,15 +16,15 @@ public class World : MonoBehaviour
 
     public static World me;
 
-    public Player player;
+    public List<Player> players = new List<Player>();
 
-    public Client client;
+    public Player player;
 
     public Package package;
 
     public int Height, Width, Depth;
 
-    public int[] map;
+    public int[] Map;
 
     private void Awake()
     {
@@ -34,56 +34,55 @@ public class World : MonoBehaviour
         }
     }
 
-    public int to1D(Vector3 v)
-    {
-        int index = ((int)v.z * Width * Height) + ((int)v.y * Width) + (int)v.x;
-        return index > map.Length ? 0 : index;
-    }
-
-    public int[] to3D(int index)
-    {
-        int z = index / (Width * Height);
-        index -= (z * Width * Height);
-        int y = index / Width;
-        int x = index % Width;
-        return new int[] { x, y, z };
-
-    }
-
-    public int GetMapId(Vector3 pos)
-    {
-        return map[to1D(pos)];
-    }
-
-    public void SetMapId(int tile, Vector3 pos)
-    {
-        map[to1D(pos)] = tile;
-    }
-
     void Start()
     {
-        Player[] players = Object.FindObjectsOfType<Player>();
+        /*Player[] players = Object.FindObjectsOfType<Player>();
         player = null;
         foreach (Player find in players)
         {
             if (find.controlling)
                 player = find;
-        }
+        }*/
 
-        map = new int[Height * Width * Depth];
-        client = GetComponent<Client>();
+        Map = new int[Height * Width * Depth];
     }
 
-    public void Read(Package package)
+    public void Incoming(Package package)
     {
-        switch (package.Action)
+        if (package.Action == (int)Package.Actions.JOIN)
         {
-            case (int)Package.Actions.WORLD:
-                Packages.World world = Packages.World.Desserialize(package.Contains);
-                break;
-            case (int)Package.Actions.MOVE:
-                MoveTo(package);
-                break;
+            Packages.Join join = Packages.Join.Desserialize(package.Contains);
+
+            if (package.Fail == 0)
+            {
+                GameObject add = Resources.Load("Prefabs/Player") as GameObject;
+                add.GetComponent<Player>().Id = join.Player;
+                add.GetComponent<Player>().Position = join.Position;
+
+                Instantiate(add);
+            }
+            else
+            {
+                Debug.Log("can't join this world " + join.Id);
+            }
+        }
+
+        if (package.Action == (int)Package.Actions.LEAVE)
+        {
+            Packages.Leave leave = Packages.Leave.Desserialize(package.Contains);
+
+            Debug.Log("leave now " + leave.Player);
+
+            GameObject find = GameObject.Find("Player" + leave.Player);
+            Destroy(find);
+        }
+
+        if (package.Action == (int)Package.Actions.MOVE)
+        {
+            foreach (Player player in players)
+            {
+                player.Incomgin(package);
+            }
         }
     }
 
@@ -91,9 +90,40 @@ public class World : MonoBehaviour
     {
         if (package != null)
         {
-            Read(package);
+            Incoming(package);
             package = null;
         }
+    }
+
+    public int To1D(Vector3 v)
+    {
+        int index = ((int)v.z * Width * Height) + ((int)v.y * Width) + (int)v.x;
+        return index > Map.Length ? 0 : index;
+    }
+
+    public int[] To3D(int index)
+    {
+        int z = index / (Width * Height);
+        index -= (z * Width * Height);
+        int y = index / Width;
+        int x = index % Width;
+        return new int[] { x, y, z };
+    }
+
+    public Vector3 To3dVector(int index)
+    {
+        int[] position = To3D(index);
+        return new Vector3(position[0], position[1], position[2]);
+    }
+
+    public int GetMapId(Vector3 pos)
+    {
+        return Map[To1D(pos)];
+    }
+
+    public void SetMapId(int tile, Vector3 pos)
+    {
+        Map[To1D(pos)] = tile;
     }
 
     public void MoveTo(Package package)
@@ -102,10 +132,10 @@ public class World : MonoBehaviour
         Player[] players = Object.FindObjectsOfType<Player>();
         foreach (Player player in players)
         {
-            if (player.Id == move.Player)
+            //if (player.Id == move.Player)
             {
-                int[] to = World.me.to3D(move.Position);
-                World.me.player.transform.position = new Vector3(to[0], to[1], to[2]) + new Vector3(0f, 1f, 0f);
+                int[] to = World.me.To3D(move.Position);
+                //World.me.player.transform.position = new Vector3(to[0], to[1], to[2]) + new Vector3(0f, 1f, 0f);
                 //player.MoveTo(from, to, move.Time);
             }
         }
@@ -122,12 +152,7 @@ public class World : MonoBehaviour
         player.MoveTo(tile, package.Time);*/
     }
 
-    public void Broadcast(Package package)
-    {
-        client.Broadcast(package);
-    }
-
-    public Tile findTile(Vector3 positon)
+    public Tile FindTile(Vector3 positon)
     {
         Tile[] tiles = Object.FindObjectsOfType<Tile>();
 
@@ -149,25 +174,26 @@ public class World : MonoBehaviour
     {
         return new Package()
         {
-            Action = (int)Package.Actions.WORLD,
+            Action = (int)Package.Actions.CREATE,
             Contains = new Packages.World()
             {
-                Id = Id,
+                Id = -1,
                 Width = Width,
                 Height = Height,
                 Depth = Depth,
-                Map = map,
-
+                Map = Map,
+                Total = 0,
+                Players = new int[] { }
             }.Serialize()
         };
     }
 
     void OnDrawGizmos()
     {
-        for (int index = 0; index < map.Length; index++)
+        for (int index = 0; index < Map.Length; index++)
         {
-            int[] p = to3D(index);
-            Gizmos.color = map[index] == 0 ? Color.green : Color.red;
+            int[] p = To3D(index);
+            Gizmos.color = Map[index] == 0 ? Color.green : Color.red;
             Gizmos.DrawSphere(new Vector3(p[0], p[1], p[2]), 0.1f);
         }
 

@@ -47,6 +47,8 @@ public class KeyFrames : MonoBehaviour
             long range = ((System.DateTime.Now.Ticks - k.min) * 100) / (k.max - k.min);
             float t = range / 100f;
 
+            transform.position = Vector3.Lerp(k.from, k.to, t);
+
             if (t >= 1f)
                 total++;
             /*

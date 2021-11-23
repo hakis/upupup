@@ -4,28 +4,49 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    public int Id = -1;
+
+    public int Position;
+
     public KeyFrames keyframes;
 
-    private static int ids = 1;
-    public int Id = 0;
-
-    public bool controlling = false;
-
-    public Tile current = null;
+    private Tile current = null;
     // Start is called before the first frame update
     void Start()
     {
-        Id = ids;
-        ids++;
-        name = $"Player:{Id}";
+        name = "Player" + Id;
 
-        gameObject.AddComponent(typeof(KeyFrames));
+        int[] v1 = World.me.To3D(Position);
+        current = World.me.FindTile(new Vector3(v1[0], v1[1], v1[2]));
 
-        keyframes = Object.FindObjectOfType<KeyFrames>();
         transform.position = current.transform.position + new Vector3(0f, 1f, 0f);
+
+        if (TcpNetwork.me != null)
+        {
+            if (Id == TcpNetwork.me.Player)
+            {
+                World.me.player = this;
+            }
+        }
+
+        World.me.players.Add(this);
     }
 
-    public void MoveTo(byte[] from, byte[] to, long tick)
+    public void Incomgin(Package package)
+    {
+        if (package.Action == (int)Package.Actions.MOVE)
+        {
+            Packages.Move move = Packages.Move.Desserialize(package.Contains);
+
+            if (move.Player == Id)
+            {
+                keyframes.Play(new KeyFrames.KeyFrame(KeyFrames.KeyFrame.Type.MOVE,
+                    transform.position, World.me.To3dVector(move.Position), move.Time));
+            }
+        }
+    }
+
+    public void Move(Package package)
     {
         if (current == null || keyframes.all.Count > 0f)
         {
@@ -33,11 +54,27 @@ public class Player : MonoBehaviour
             return;
         }
 
-        keyframes.Play(new KeyFrames.KeyFrame(
-                        KeyFrames.KeyFrame.Type.MOVE,
-                        Helper.BytesToVector3(from),
-                        Helper.BytesToVector3(to) + new Vector3(0f, 1f, 0f),
-                        tick));
+        TcpNetwork.me.Broadcast(package);
+
+    }
+
+    public void MoveTo(byte[] from, byte[] to, long tick)
+    {
+        /*
+        if (current == null || keyframes.all.Count > 0f)
+        {
+            Debug.Log("running keyframes");
+            return;
+        }
+        */
+
+        /*
+                keyframes.Play(new KeyFrames.KeyFrame(
+                                KeyFrames.KeyFrame.Type.MOVE,
+                                Helper.BytesToVector3(from),
+                                Helper.BytesToVector3(to) + new Vector3(0f, 1f, 0f),
+                                tick));
+                                */
         /*
 
          Vector3[] points = new Vector3[] {
