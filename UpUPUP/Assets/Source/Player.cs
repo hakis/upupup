@@ -28,8 +28,6 @@ public class Player : MonoBehaviour
                 World.me.player = this;
             }
         }
-
-        World.me.players.Add(this);
     }
 
     public void Incomgin(Package package)

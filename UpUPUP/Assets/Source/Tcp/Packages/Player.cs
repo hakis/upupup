@@ -9,8 +9,6 @@ namespace Packages
 
         public int Position;
 
-        public int Current;
-
         public byte[] Serialize()
         {
             using (MemoryStream m = new MemoryStream())
@@ -19,7 +17,6 @@ namespace Packages
                 {
                     writer.Write(Id);
                     writer.Write(Position);
-                    writer.Write(Current);
                 }
                 return m.ToArray();
             }
@@ -34,7 +31,6 @@ namespace Packages
                 {
                     player.Id = reader.ReadInt32();
                     player.Position = reader.ReadInt32();
-                    player.Current = reader.ReadInt32();
                 }
             }
             return player;

@@ -84,21 +84,6 @@ public class TcpNetwork : MonoBehaviour
         {
             Broadcast(new Package()
             {
-                Action = (int)Package.Actions.MOVE,
-                Contains = new Packages.Move()
-                {
-                    Player = TcpNetwork.me.Player,
-                    Time = 2,
-                    Position = 1,
-                    Current = 1
-                }.Serialize()
-            });
-        }
-
-        if (Input.GetKeyUp(KeyCode.F5))
-        {
-            Broadcast(new Package()
-            {
                 Action = -1,
                 Contains = new byte[] { 0 }
             });

@@ -33,6 +33,9 @@ namespace Packages
 
                     foreach (int index in Map)
                         writer.Write(index);
+
+                    foreach (int player in Players)
+                        writer.Write(player);
                 }
                 return m.ToArray();
             }
