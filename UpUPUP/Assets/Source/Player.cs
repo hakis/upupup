@@ -38,6 +38,7 @@ public class Player : MonoBehaviour
 
             if (move.Player == Id)
             {
+                Debug.Log(move.Time);
                 keyframes.Play(new KeyFrames.KeyFrame(KeyFrames.KeyFrame.Type.MOVE,
                     transform.position, World.me.To3dVector(move.Position), move.Time));
             }
