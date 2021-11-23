@@ -36,7 +36,9 @@ public class KeyFrames : MonoBehaviour
         all.Add(keyframe);
     }
 
-    void Update()
+
+
+    void FixedUpdate()
     {
         if (all.Count == 0)
             return;
