@@ -38,7 +38,7 @@ public class KeyFrames : MonoBehaviour
 
 
 
-    void FixedUpdate()
+    public void Update()
     {
         if (all.Count == 0)
             return;

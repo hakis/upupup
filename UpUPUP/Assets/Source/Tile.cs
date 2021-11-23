@@ -82,7 +82,7 @@ public class Tile : MonoBehaviour
             Contains = new Packages.Move()
             {
                 Player = TcpNetwork.me.Player,
-                Time = TimeSpan.TicksPerSecond / 4,
+                Time = TimeSpan.TicksPerSecond,
                 //Current = World.me.To1D(World.me.player.current.transform.position),
                 Position = World.me.To1D(transform.position)
             }.Serialize()
