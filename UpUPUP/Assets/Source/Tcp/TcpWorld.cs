@@ -26,7 +26,17 @@ public class TcpWorld : MonoBehaviour
         if (package.Action == (int)Package.Actions.PLAYER)
         {
             Packages.Player player = Packages.Player.Desserialize(package.Contains);
-            AddPlayer(player.Id, player.Position);
+            if (player.Total > 0)
+            {
+                for (int i = 0; i < player.Total; i++)
+                {
+                    AddPlayer(player.Players[i], player.Positions[i]);
+                }
+            }
+            else
+            {
+                AddPlayer(player.Id, player.Position);
+            }
         }
 
         if (package.Action == (int)Package.Actions.LEAVE)
