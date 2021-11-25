@@ -35,9 +35,10 @@ public class Player : MonoBehaviour
         if (package.Action == (int)Package.Actions.MOVE)
         {
             Packages.Move move = Packages.Move.Desserialize(package.Contains);
-
             if (move.Player == Id)
             {
+                Position = move.Position;
+
                 keyframes.Play(new KeyFrames.KeyFrame(KeyFrames.KeyFrame.Type.MOVE,
                     transform.position, World.me.To3dVector(move.Position), move.Time));
             }
