@@ -23,8 +23,8 @@ public class KeyFrames : MonoBehaviour
             this.from = from;
             this.to = to;
             this.t = 0;
-            this.min = min;
-            this.max = max;
+            this.min = System.DateTime.UtcNow.Ticks;
+            this.max = max - (min - System.DateTime.UtcNow.Ticks);
             done = false;
         }
     }
@@ -48,6 +48,8 @@ public class KeyFrames : MonoBehaviour
         {
             long range = ((System.DateTime.UtcNow.Ticks - k.min) * 100) / (k.max - k.min);
             float t = range / 100f;
+
+            Debug.Log(range);
 
             transform.position = Vector3.Lerp(k.from, k.to, t);
 
