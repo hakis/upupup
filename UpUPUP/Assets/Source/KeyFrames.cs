@@ -23,7 +23,7 @@ public class KeyFrames : MonoBehaviour
             this.from = from;
             this.to = to;
             this.t = 0;
-            this.min = System.DateTime.Now.Ticks;
+            this.min = System.DateTime.UtcNow.Ticks;
             this.max = max;
             done = false;
         }
