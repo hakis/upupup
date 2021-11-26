@@ -17,13 +17,13 @@ public class KeyFrames : MonoBehaviour
 
         public bool done;
 
-        public KeyFrame(Type type, Vector3 from, Vector3 to, long max)
+        public KeyFrame(Type type, Vector3 from, Vector3 to, long min, long max)
         {
             this.type = type;
             this.from = from;
             this.to = to;
             this.t = 0;
-            this.min = System.DateTime.UtcNow.Ticks;
+            this.min = min;
             this.max = max;
             done = false;
         }

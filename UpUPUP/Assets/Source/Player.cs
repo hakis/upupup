@@ -40,7 +40,7 @@ public class Player : MonoBehaviour
                 Position = move.Position;
 
                 keyframes.Play(new KeyFrames.KeyFrame(KeyFrames.KeyFrame.Type.MOVE,
-                    transform.position, World.me.To3dVector(move.Position), move.Time));
+                    transform.position, World.me.To3dVector(move.Position), move.Min, move.Max));
             }
         }
     }
