@@ -33,6 +33,8 @@ public class KeyFrames : MonoBehaviour
 
     public void Play(KeyFrame keyframe)
     {
+        Debug.Log("Keyframe  max:" + keyframe.max + " min: " + keyframe.min);
+
         all.Add(keyframe);
     }
 
