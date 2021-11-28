@@ -46,6 +46,7 @@ public class TcpWorld : MonoBehaviour
             Debug.Log("leave now " + leave.Player);
 
             GameObject find = GameObject.Find("Player" + leave.Player);
+            players.Remove(find.GetComponent<Player>());
             Destroy(find);
         }
 

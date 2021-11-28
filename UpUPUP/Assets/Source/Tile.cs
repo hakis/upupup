@@ -21,6 +21,8 @@ public class Tile : MonoBehaviour
         World.me.player.Move(GetPackage());
 
 
+        Debug.Log(World.me.To1D(transform.position));
+
         /*
         Player player = World.me.player;
         Vector3 v1 = transform.position - player.current.transform.position;

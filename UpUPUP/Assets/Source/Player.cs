@@ -19,7 +19,7 @@ public class Player : MonoBehaviour
         int[] v1 = World.me.To3D(Position);
         current = World.me.FindTile(new Vector3(v1[0], v1[1], v1[2]));
 
-        transform.position = current.transform.position + new Vector3(0f, 1f, 0f);
+        //transform.position = current.transform.position + new Vector3(0f, 1f, 0f);
 
         if (TcpNetwork.me != null)
         {
