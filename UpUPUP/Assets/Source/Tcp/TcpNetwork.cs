@@ -107,7 +107,7 @@ public class TcpNetwork : MonoBehaviour
             Package package = Package.Desserialize(bytes);
 
             TcpNetwork.me.Incoming(package);
-            World.me.package = package;
+            World.me.packages.Add(package);
 
             bytes = new byte[1024];
             stream.BeginRead(bytes, 0, bytes.Length, Read, null);

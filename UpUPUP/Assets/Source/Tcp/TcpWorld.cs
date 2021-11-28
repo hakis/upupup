@@ -4,12 +4,13 @@ using UnityEngine;
 
 public class TcpWorld : MonoBehaviour
 {
-    public List<Player> players = new List<Player>();
 
-    public Package package;
+    public List<Package> packages;
 
     public void Incoming(Package package)
     {
+        Debug.Log("Incoming: " + package.Action);
+
         if (package.Action == (int)Package.Actions.JOIN)
         {
             Packages.Join join = Packages.Join.Desserialize(package.Contains);
@@ -26,6 +27,7 @@ public class TcpWorld : MonoBehaviour
         if (package.Action == (int)Package.Actions.PLAYER)
         {
             Packages.Player player = Packages.Player.Desserialize(package.Contains);
+
             if (player.Total > 0)
             {
                 for (int i = 0; i < player.Total; i++)
@@ -46,13 +48,13 @@ public class TcpWorld : MonoBehaviour
             Debug.Log("leave now " + leave.Player);
 
             GameObject find = GameObject.Find("Player" + leave.Player);
-            players.Remove(find.GetComponent<Player>());
             Destroy(find);
         }
 
         if (package.Action == (int)Package.Actions.MOVE)
         {
             Packages.Move move = Packages.Move.Desserialize(package.Contains);
+            Player[] players = Object.FindObjectsOfType<Player>();
             foreach (Player player in players)
             {
                 player.Incomgin(package);
@@ -64,8 +66,8 @@ public class TcpWorld : MonoBehaviour
     {
         Debug.Log($"Add Player {id} At {position}");
 
-        //if (HasPlayer(id) != null)
-        //    return;
+        if (HasPlayer(id) != null)
+            return;
 
         GameObject add = Resources.Load("Prefabs/Player") as GameObject;
         add.GetComponent<Player>().Id = id;
@@ -73,11 +75,11 @@ public class TcpWorld : MonoBehaviour
 
         GameObject toadd = Instantiate(add);
         toadd.transform.position = World.me.To3dVector(position);
-        players.Add(toadd.GetComponent<Player>());
     }
 
     public Player HasPlayer(int id)
     {
+        Player[] players = Object.FindObjectsOfType<Player>();
         foreach (Player player in players)
             if (player.Id == id)
                 return player;

@@ -33,10 +33,11 @@ public class World : TcpWorld
 
     void Update()
     {
-        if (package != null)
+        if (packages.Count > 0)
         {
+            Package package = packages[0];
             Incoming(package);
-            package = null;
+            packages.RemoveAt(0);
         }
     }
 

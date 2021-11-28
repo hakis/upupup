@@ -18,6 +18,9 @@ public class Tile : MonoBehaviour
 
     private void OnMouseDown()
     {
+        if (World.me.player == null)
+            return;
+
         World.me.player.Move(GetPackage());
 
 
