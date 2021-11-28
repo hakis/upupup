@@ -71,6 +71,7 @@ public class TcpWorld : MonoBehaviour
         add.GetComponent<Player>().Position = position;
 
         GameObject toadd = Instantiate(add);
+        toadd.transform.position = World.me.To3dVector(position);
         players.Add(toadd.GetComponent<Player>());
     }
 
