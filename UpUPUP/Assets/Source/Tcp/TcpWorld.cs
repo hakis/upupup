@@ -5,7 +5,7 @@ using UnityEngine;
 public class TcpWorld : MonoBehaviour
 {
 
-    public List<Package> packages;
+    public List<Package> packages = new List<Package>();
 
     public void Incoming(Package package)
     {
