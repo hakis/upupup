@@ -64,8 +64,8 @@ public class TcpWorld : MonoBehaviour
     {
         Debug.Log($"Add Player {id} At {position}");
 
-        if (HasPlayer(id) != null)
-            return;
+        //if (HasPlayer(id) != null)
+        //    return;
 
         GameObject add = Resources.Load("Prefabs/Player") as GameObject;
         add.GetComponent<Player>().Id = id;
