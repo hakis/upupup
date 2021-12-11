@@ -83,7 +83,7 @@ public class TcpWorld : MonoBehaviour
         {
             if (world.Map[i] == 1)
             {
-                GameObject add = Resources.Load("Prefabs/Tile") as GameObject;
+                GameObject add = Resources.Load("Prefabs/Tile1") as GameObject;
 
                 GameObject tile = Instantiate(add);
                 tile.transform.position = World.me.To3dVector(i);

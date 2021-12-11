@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class World : TcpWorld
 {
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    /*[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     static void OnBeforeSceneLoadRuntimeMethod()
     {
         Instantiate(Resources.Load("Prefabs/World", typeof(GameObject)) as GameObject);
-    }
+    }*/
 
     public static World me;
 
