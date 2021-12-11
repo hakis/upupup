@@ -6,7 +6,7 @@ using UnityEngine;
 public class Orbit : MonoBehaviour
 {
     [SerializeField]
-    Transform focus = default;
+    public Transform focus = default;
 
     [SerializeField, Range(1f, 20f)]
     float distance = 10f;
@@ -43,6 +43,9 @@ public class Orbit : MonoBehaviour
 
     private void UpdateFocusPoint()
     {
+        if (focus == null)
+            return;
+
         Vector3 targetPoint = focus.position;
 
         if (focusRadius > 0f)

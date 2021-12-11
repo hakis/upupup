@@ -102,8 +102,7 @@ public class World : TcpWorld
                 Height = Height,
                 Depth = Depth,
                 Map = Map,
-                Total = 0,
-                Players = new int[] { }
+                Players = new Packages.Player().Serialize()
             }.Serialize()
         };
     }

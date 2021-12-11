@@ -26,6 +26,7 @@ public class Player : MonoBehaviour
             if (Id == TcpNetwork.me.Player)
             {
                 World.me.player = this;
+                Camera.main.GetComponent<Orbit>().focus = transform;
             }
         }
     }
@@ -54,7 +55,6 @@ public class Player : MonoBehaviour
         }
 
         TcpNetwork.me.Broadcast(package);
-
     }
 
     public void MoveTo(byte[] from, byte[] to, long tick)

@@ -9,7 +9,7 @@ public class TcpWorld : MonoBehaviour
 
     public void Incoming(Package package)
     {
-        Debug.Log("Incoming: " + package.Action);
+        Debug.Log("World Incoming: " + package.Action);
 
         if (package.Action == (int)Package.Actions.JOIN)
         {
@@ -24,6 +24,19 @@ public class TcpWorld : MonoBehaviour
             }
         }
 
+        if (package.Action == (int)Package.Actions.WORLD)
+        {
+            Packages.World world = Packages.World.Desserialize(package.Contains);
+            AddBlocks(world);
+
+            Packages.Player player = Packages.Player.Desserialize(world.Players);
+            for (int i = 0; i < player.Total; i++)
+            {
+                AddPlayer(player.Players[i], player.Positions[i]);
+            }
+        }
+
+        /*
         if (package.Action == (int)Package.Actions.PLAYER)
         {
             Packages.Player player = Packages.Player.Desserialize(package.Contains);
@@ -40,6 +53,7 @@ public class TcpWorld : MonoBehaviour
                 AddPlayer(player.Id, player.Position);
             }
         }
+        */
 
         if (package.Action == (int)Package.Actions.LEAVE)
         {
@@ -58,6 +72,22 @@ public class TcpWorld : MonoBehaviour
             foreach (Player player in players)
             {
                 player.Incomgin(package);
+            }
+        }
+    }
+
+    public void AddBlocks(Packages.World world)
+    {
+        Debug.Log("time to add blocks");
+        for (int i = 0; i < world.Map.Length; i++)
+        {
+            if (world.Map[i] == 1)
+            {
+                GameObject add = Resources.Load("Prefabs/Tile") as GameObject;
+                add.AddComponent<Tile>();
+                add.transform.position = World.me.To3dVector(i);
+
+                Instantiate(add);
             }
         }
     }

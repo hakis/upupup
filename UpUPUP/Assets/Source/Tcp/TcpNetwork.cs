@@ -33,7 +33,7 @@ public class TcpNetwork : MonoBehaviour
             stream = server.GetStream();
 
             stream.BeginRead(bytes, 0, bytes.Length, Read, null);
-        }, World.me.GetPackage());
+        }, null);
     }
 
     public void Update()
@@ -42,13 +42,13 @@ public class TcpNetwork : MonoBehaviour
         {
             Broadcast(new Package()
             {
-                Action = (int)Package.Actions.CREATE,
-                Contains = new Packages.Create()
+                Action = (int)Package.Actions.WORLD,
+                Contains = new Packages.World()
                 {
-                    Width = World.me.Width,
-                    Height = World.me.Height,
-                    Depth = World.me.Height,
-                    Map = World.me.Map
+                    Width = 5,
+                    Height = 5,
+                    Depth = 5,
+                    Map = new int[] { 1, 1, 1, 1, 1 }
                 }.Serialize()
             });
         }

@@ -46,13 +46,16 @@ namespace Packages
                     player.Position = reader.ReadInt32();
                     int total = player.Total = reader.ReadInt32();
 
-                    player.Players = new int[total];
-                    for (int i = 0; i < total; i++)
-                        player.Players[i] = reader.ReadInt32();
+                    if (total > 0)
+                    {
+                        player.Players = new int[total];
+                        for (int i = 0; i < total; i++)
+                            player.Players[i] = reader.ReadInt32();
 
-                    player.Positions = new int[total];
-                    for (int i = 0; i < total; i++)
-                        player.Positions[i] = reader.ReadInt32();
+                        player.Positions = new int[total];
+                        for (int i = 0; i < total; i++)
+                            player.Positions[i] = reader.ReadInt32();
+                    }
                 }
             }
             return player;
