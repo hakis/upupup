@@ -49,6 +49,12 @@ public class KeyFrames : MonoBehaviour
 
             transform.position = Vector3.Lerp(k.from, k.to, t);
 
+            Vector3 from = new Vector3(k.from.x, 0, k.from.z);
+            Vector3 to = new Vector3(k.to.x, 0, k.to.z);
+
+            Quaternion rotate = Quaternion.LookRotation(from - to, Vector3.up);
+            transform.rotation = rotate;
+
             if (t >= 1f)
                 total++;
             /*

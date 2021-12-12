@@ -36,6 +36,25 @@ public class TcpWorld : MonoBehaviour
             }
         }
 
+        if (package.Action == (int)Package.Actions.BLOCK)
+        {
+            Packages.Block block = Packages.Block.Desserialize(package.Contains);
+
+            if (block.Fail == 0)
+            {
+                if (block.Index >= 0 && block.Index < World.me.Map.Length)
+                {
+                    if (World.me.Map[block.Index] == 0 && block.AddRemove == 0)
+                    {
+                        GameObject add = Resources.Load("Prefabs/Tile1") as GameObject;
+
+                        GameObject tile = Instantiate(add);
+                        tile.transform.position = World.me.To3dVector(block.Index);
+                    }
+                }
+            }
+        }
+
         /*
         if (package.Action == (int)Package.Actions.PLAYER)
         {

@@ -3,7 +3,7 @@ using System.IO;
 
 public class Package
 {
-    public enum Actions { MOVE, WORLD, CREATE, JOIN, LEAVE, START, CONNECTED, PLAYER }
+    public enum Actions { MOVE, WORLD, CREATE, JOIN, LEAVE, START, CONNECTED, PLAYER, BLOCK }
 
     public int Action { get; set; }
 

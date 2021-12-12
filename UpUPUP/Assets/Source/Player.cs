@@ -31,6 +31,74 @@ public class Player : MonoBehaviour
         }
     }
 
+    public void Update()
+    {
+        Vector3 add = Vector3.zero;
+
+        if (Input.GetKeyUp(KeyCode.UpArrow))
+        {
+            add = new Vector3(0, 0, 1);
+        }
+
+        if (Input.GetKeyUp(KeyCode.DownArrow))
+        {
+            add = new Vector3(0, 0, -1);
+        }
+
+
+        if (Input.GetKeyUp(KeyCode.RightArrow))
+        {
+            add = new Vector3(1, 0, 0);
+        }
+
+
+        if (Input.GetKeyUp(KeyCode.LeftArrow))
+        {
+            add = new Vector3(-1, 0, 0);
+        }
+
+        if (Input.GetKeyUp(KeyCode.Return))
+        {
+            add = new Vector3(0, 1, 0);
+        }
+
+
+        if (add != Vector3.zero)
+        {
+            int index = World.me.To1D(transform.position + add);
+            int width = (int)transform.position.x + (int)add.x;
+            int height = (int)transform.position.y + (int)add.y;
+            int depth = (int)transform.position.z + (int)add.z;
+
+            if (index > 0)
+            {
+                if (width >= 0 && width < World.me.Width)
+                {
+                    if (height >= 0 && height < World.me.Height)
+                    {
+                        if (depth >= 0 && depth < World.me.Depth)
+                        {
+                            TcpNetwork.me.Broadcast(new Package()
+                            {
+                                Action = (int)Package.Actions.BLOCK,
+                                Contains = new Packages.Block()
+                                {
+                                    Tile = 1,
+                                    Index = index,
+                                    X = width,
+                                    Y = height,
+                                    Z = depth,
+                                    Fail = 0,
+                                    AddRemove = 0
+                                }.Serialize()
+                            });
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     public void Incomgin(Package package)
     {
         if (package.Action == (int)Package.Actions.MOVE)
