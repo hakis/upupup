@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class TcpWorld : MonoBehaviour
 {
-
     public List<Package> packages = new List<Package>();
 
     public void Incoming(Package package)
@@ -46,7 +45,7 @@ public class TcpWorld : MonoBehaviour
                 {
                     if (World.me.Map[block.Index] == 0 && block.AddRemove == 0)
                     {
-                        GameObject add = Resources.Load("Prefabs/Tile1") as GameObject;
+                        GameObject add = Resources.Load("Prefabs/Tile" + block.Tile) as GameObject;
 
                         GameObject tile = Instantiate(add);
                         tile.transform.position = World.me.To3dVector(block.Index);
@@ -100,9 +99,9 @@ public class TcpWorld : MonoBehaviour
         Debug.Log("time to add blocks");
         for (int i = 0; i < world.Map.Length; i++)
         {
-            if (world.Map[i] == 1)
+            if (world.Map[i] > 0)
             {
-                GameObject add = Resources.Load("Prefabs/Tile1") as GameObject;
+                GameObject add = Resources.Load("Prefabs/Tile" + world.Map[i]) as GameObject;
 
                 GameObject tile = Instantiate(add);
                 tile.transform.position = World.me.To3dVector(i);

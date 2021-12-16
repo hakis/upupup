@@ -8,6 +8,8 @@ public class Player : MonoBehaviour
 
     public int Position;
 
+    public int Tile = 1;
+
     public KeyFrames keyframes;
 
     private Tile current = null;
@@ -62,6 +64,16 @@ public class Player : MonoBehaviour
             add = new Vector3(0, 1, 0);
         }
 
+        if (Input.GetKeyUp(KeyCode.Keypad1))
+        {
+            Tile = 1;
+        }
+
+        if (Input.GetKeyUp(KeyCode.Keypad2))
+        {
+            Tile = 2;
+        }
+
 
         if (add != Vector3.zero)
         {
@@ -83,7 +95,7 @@ public class Player : MonoBehaviour
                                 Action = (int)Package.Actions.BLOCK,
                                 Contains = new Packages.Block()
                                 {
-                                    Tile = 1,
+                                    Tile = Tile,
                                     Index = index,
                                     X = width,
                                     Y = height,
